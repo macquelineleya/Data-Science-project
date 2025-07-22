@@ -1,0 +1,66 @@
+**Finance Fraud Detection Project**
+
+---
+
+### 📉 Summary
+
+A robust fraud detection system was developed using a stack ensemble of three core models:
+
+- **Random Forest** :*trained the model by fiting the pandas X_train values*
+- **XGBoost**:*trained the model by fiting the pandas X_train values*
+- **MLP (Neural Network)**:*created a class for this following its structure*
+
+Enhancements and evaluation techniques applied(Initally, the performance was so low hence these implementations):
+
+- **SMOTE** to address class imbalance by creating more synthetic intsnces of the minority class
+- **Stacked probabilities** and **interaction terms** as meta-features(*saved as meta_feature_selector.pkl*)
+- **Bagging with Logistic Regression** as a meta-learner saved as (*meta_learner.pkl*)
+- **Threshold tuning** to find the optimal classification point (0.5)
+- **Feature selection** on the meta-level
+- **Cross-validation** for reliability and generalization
+
+**NB1:** For each model, training data set was fed into it.Then, the resulting probabilities(*stored in meta_features*) were combined (stacked) using the *BaggingClassifier* so as one in a meta_model
+which was our final model in this case.So even when testing with new data from *test_sample.csv*, we just load the saved final model and use it to get predictions without
+retraining it.
+Also,We continue to move and change the probabilities to predictions, we use the threshold *optimal_threshold* to determine whether a tranactioin is fraudulent(1,>optimal_threshold) or
+not (0, <threshold)
+
+**NB2:** We converted the X_train dataset to be fed in the pytorch model to tensor since that is a fundamental data structure for this framework, and for all operations in
+this framework, they have to be in tensor.
+
+**Final Model Performance:**
+
+| Metric               | Score    |
+| -------------------- | -------- |
+| 🌟 Precision (Fraud) | 0.89   |
+| 🌟 Recall (Fraud)    | 0.95    |
+| ✅ F1 Score           | **0.912** |
+| ✅ ROC AUC            | 0.98    |
+| ✅ Balanced Accuracy  | 0.92     |
+| ✅ Mean F1            | 0.7478    |
+| ✅Best threshold      | 0.50     |
+
+---
+
+### ✅ Conclusions
+
+- The **stacked ensemble** greatly outperformed single models.
+- **SMOTE** helped create a balanced and learnable class distribution.
+- **Threshold tuning** improved the F1 score by adjusting sensitivity vs. specificity...*helps us in making our final predictions*
+- **Cross-validation** showed consistent model behavior across folds.
+- **Confusion Matrix** analysis proved the model is not biased:
+
+```
+[[85 11]  #True negatives, false positives
+ [ 5 91]] # False Negatives, True Positives
+```
+---
+
+### 🧩 Actionable Insights
+
+- The model catches **\~95% of fraudulent transactions** with minimal false positives.
+- **Interaction features and probability stacking** significantly improved prediction power.
+- Minor false negatives remain, which is acceptable in practical use cases.
+- Feature selection helped reduce overfitting and increased generalization.
+
+---
